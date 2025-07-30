@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"zurihaqi.github.io-backend/internal/dto"
+	"zurihaqi.github.io-backend/internal/service"
 	"zurihaqi.github.io-backend/internal/service/interfaces"
 )
 
@@ -26,7 +28,12 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	user, err := h.Service.Register(req.Name, req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.InternalError(err.Error()))
+		switch {
+		case errors.Is(err, service.ErrEmailExists):
+			c.JSON(http.StatusBadRequest, dto.BadRequest(err.Error()))
+		default:
+			c.JSON(http.StatusInternalServerError, dto.InternalError(err.Error()))
+		}
 		return
 	}
 

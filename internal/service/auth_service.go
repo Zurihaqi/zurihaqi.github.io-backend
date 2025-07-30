@@ -11,6 +11,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	ErrEmailExists    = errors.New("email already registered")
+)
+
 type AuthService struct {
 	UserRepo repoInterface.UserRepository
 }
@@ -20,6 +24,11 @@ func NewAuthService(userRepo repoInterface.UserRepository) interfaces.AuthServic
 }
 
 func (s *AuthService) Register(name, email, password string) (*model.User, error) {
+
+	if _, err := s.UserRepo.FindByEmail(email); err == nil {
+		return nil, ErrEmailExists
+	}
+
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err

@@ -11,6 +11,13 @@ import (
 func SeedProjects() {
 	db := database.DB
 
+	if err := db.Exec("DELETE FROM projects").Error; err != nil {
+		log.Fatal("Failed to delete existing projects:", err)
+	}
+	if err := db.Exec("DELETE FROM sqlite_sequence WHERE name = 'projects'").Error; err != nil {
+		log.Fatal("Failed to reset projects ID sequence:", err)
+	}
+
 	projectsData := []struct {
 		Title        string
 		Description  string

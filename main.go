@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"zurihaqi.github.io-backend/internal/database"
+	seeder "zurihaqi.github.io-backend/internal/database/seeder"
 	"zurihaqi.github.io-backend/internal/route"
-	seeder "zurihaqi.github.io-backend/internal/seeder"
 )
 
 func main() {

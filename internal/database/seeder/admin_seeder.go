@@ -17,14 +17,21 @@ func SeedAdmin() {
 		log.Fatal("ADMIN_PASSWORD environment variable is not set")
 	}
 
-	var adminUsername string
-	if adminUsername = os.Getenv("ADMIN_USERNAME"); adminUsername == "" {
-		log.Fatal("ADMIN_USERNAME environment variable is not set")
+	var adminName string
+	if adminName = os.Getenv("ADMIN_NAME"); adminName == "" {
+		log.Fatal("ADMIN_NAME environment variable is not set")
 	}
 
 	var adminEmail string
 	if adminEmail = os.Getenv("ADMIN_EMAIL"); adminEmail == "" {
 		log.Fatal("ADMIN_EMAIL environment variable is not set")
+	}
+
+	if err := db.Exec("DELETE FROM users").Error; err != nil {
+		log.Fatal("Failed to delete existing users:", err)
+	}
+	if err := db.Exec("DELETE FROM sqlite_sequence WHERE name = 'users'").Error; err != nil {
+		log.Fatal("Failed to reset users ID sequence:", err)
 	}
 
 	password := adminPassword
@@ -34,8 +41,8 @@ func SeedAdmin() {
 	}
 
 	admin := model.User{
-		Name:     adminUsername,
-		Email:    adminPassword,
+		Name:     adminName,
+		Email:    adminEmail,
 		Password: string(hashedPassword),
 	}
 
